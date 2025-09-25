@@ -42,7 +42,7 @@
     });
   }
 </script> -->
-<script>
+<!-- <script>
   function denyAllConsent() {
     if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
       // Check if we already denied consent
@@ -71,8 +71,29 @@
       denyAllConsent();
     });
   }
-</script>
+</script> -->
 
+<script>
+function denyAllConsent() {
+  if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
+    if (!localStorage.getItem("gpcConsentDenied")) {
+      Cookiebot.submitCustomConsent(false, false, false);
+      if (Cookiebot.hide) Cookiebot.hide();
+      localStorage.setItem("gpcConsentDenied", "true");
+    }
+  }
+}
+
+if (navigator.globalPrivacyControl === true) {
+  // Poll every 100ms until Cookiebot is ready
+  var cookiebotPoll = setInterval(function() {
+    if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
+      denyAllConsent();
+      clearInterval(cookiebotPoll); // stop polling once done
+    }
+  }, 100);
+}
+</script>
 
 
 	<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="8d64a0fc-50a1-467e-9909-9661fcbbbcd9" data-blockingmode="auto" type="text/javascript"></script>
