@@ -19,29 +19,33 @@
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 	<script>
-  // Check for Global Privacy Control (GPC) signal
-  if (navigator.globalPrivacyControl === true) {
-    // When Cookiebot is ready
-    window.addEventListener("CookiebotOnLoad", function() {
-      // Explicitly deny all consent categories
-      Cookiebot.submitConsent(false, false, false, false);
+  // Function to deny all non-necessary categories
+  function denyAllConsent() {
+    if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
+      // Deny preferences, statistics, marketing
+      Cookiebot.submitCustomConsent(false, false, false);
 
-      // Hide Cookiebot default banner if it tries to render
-      var banner = document.getElementById("CybotCookiebotDialog");
-      if (banner) {
-        banner.style.display = "none";
+      // Hide banner if it appears
+      if (Cookiebot.hide) {
+        Cookiebot.hide();
       }
+    }
+  }
+
+  // Check Global Privacy Control (GPC) signal
+  if (navigator.globalPrivacyControl === true) {
+    // When Cookiebot is ready, deny all + hide banner
+    window.addEventListener("CookiebotOnLoad", function() {
+      denyAllConsent();
     });
 
-    // As a fallback, hide banner if it appears during declaration events
+    // As a fallback, run again on declaration events
     window.addEventListener("CookieConsentDeclaration", function() {
-      var banner = document.getElementById("CybotCookiebotDialog");
-      if (banner) {
-        banner.style.display = "none";
-      }
+      denyAllConsent();
     });
   }
 </script>
+
 
 
 	<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="8d64a0fc-50a1-467e-9909-9661fcbbbcd9" data-blockingmode="auto" type="text/javascript"></script>
