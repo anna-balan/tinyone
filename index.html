@@ -18,7 +18,7 @@
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
-	<script>
+	<!-- <script>
   // Function to deny all non-necessary categories
   function denyAllConsent() {
     if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
@@ -37,6 +37,36 @@
    denyAllConsent();
 
     // Also as a fallback, deny once Cookiebot fully loads
+    window.addEventListener("CookiebotOnLoad", function() {
+      denyAllConsent();
+    });
+  }
+</script> -->
+<script>
+  function denyAllConsent() {
+    if (typeof Cookiebot !== "undefined" && Cookiebot.submitCustomConsent) {
+      // Check if we already denied consent
+      if (!localStorage.getItem("gpcConsentDenied")) {
+        // Deny preferences, statistics, marketing
+        Cookiebot.submitCustomConsent(false, false, false);
+
+        // Hide banner
+        if (Cookiebot.hide) {
+          Cookiebot.hide();
+        }
+
+        // Set flag so we don't deny again
+        localStorage.setItem("gpcConsentDenied", "true");
+      }
+    }
+  }
+
+  // Check GPC signal
+  if (navigator.globalPrivacyControl === true) {
+    // Try immediately
+    denyAllConsent();
+
+    // Fallback when Cookiebot finishes loading
     window.addEventListener("CookiebotOnLoad", function() {
       denyAllConsent();
     });
