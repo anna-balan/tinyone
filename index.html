@@ -34,11 +34,12 @@
 
   // Check Global Privacy Control (GPC) signal
   if (navigator.globalPrivacyControl === true) {
-    // When Cookiebot is ready, deny all + hide banner
+   denyAllConsent();
+
+    // Also as a fallback, deny once Cookiebot fully loads
     window.addEventListener("CookiebotOnLoad", function() {
       denyAllConsent();
     });
-
   }
 </script>
 
